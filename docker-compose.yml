@@ -1,0 +1,88 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.35.7
+    ports:
+      - "127.0.0.1:${N8N_HOST_PORT:-5678}:5678"
+    environment:
+      N8N_HOST: 0.0.0.0
+      N8N_LISTEN_ADDRESS: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: "false"
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+      WORKFLOW_A_TEST_ROW_NUMBER: ${WORKFLOW_A_TEST_ROW_NUMBER:?Set WORKFLOW_A_TEST_ROW_NUMBER in .env}
+      GOOGLE_SHEETS_DOCUMENT_ID: ${GOOGLE_SHEETS_DOCUMENT_ID:?Set GOOGLE_SHEETS_DOCUMENT_ID in .env}
+      GOOGLE_SHEETS_SHEET_NAME: ${GOOGLE_SHEETS_SHEET_NAME:?Set GOOGLE_SHEETS_SHEET_NAME in .env}
+      CONTENT_WORKER_URL: ${CONTENT_WORKER_URL:?Set CONTENT_WORKER_URL in .env}
+      ELIGIBILITY_MODEL: ${ELIGIBILITY_MODEL:?Set ELIGIBILITY_MODEL in .env}
+      EDITOR_MODEL: ${EDITOR_MODEL:?Set EDITOR_MODEL in .env}
+      VALIDATOR_MODEL: ${VALIDATOR_MODEL:?Set VALIDATOR_MODEL in .env}
+      VALIDATOR_REASONING_EFFORT: ${VALIDATOR_REASONING_EFFORT:-}
+      MAX_LLM_SOURCE_CHARS: ${MAX_LLM_SOURCE_CHARS:?Set MAX_LLM_SOURCE_CHARS in .env}
+      MAX_EXTRACTED_CHARS: ${MAX_EXTRACTED_CHARS:?Set MAX_EXTRACTED_CHARS in .env}
+      MAX_PUBLICATION_DESCRIPTION_CHARS: ${MAX_PUBLICATION_DESCRIPTION_CHARS:?Set MAX_PUBLICATION_DESCRIPTION_CHARS in .env}
+      WORKFLOW_VERSION: ${WORKFLOW_VERSION:?Set WORKFLOW_VERSION in .env}
+      CONFIG_VERSION: ${CONFIG_VERSION:?Set CONFIG_VERSION in .env}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n:/files/n8n:ro
+    depends_on:
+      content-worker:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:5678/healthz"]
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 18
+    networks:
+      - workflow-a-internal
+
+  browserless:
+    image: ghcr.io/browserless/chromium:v2.55.3
+    environment:
+      CONCURRENT: "1"
+      QUEUED: "2"
+      TIMEOUT: "60000"
+      HEALTH: "true"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/active').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      start_period: 15s
+      retries: 24
+    networks:
+      - workflow-a-internal
+
+  content-worker:
+    build:
+      context: ./worker
+    environment:
+      BROWSERLESS_URL: ${BROWSERLESS_URL:?Set BROWSERLESS_URL in .env}
+      FETCH_TIMEOUT_SECONDS: ${FETCH_TIMEOUT_SECONDS:?Set FETCH_TIMEOUT_SECONDS in .env}
+      MAX_REDIRECTS: ${MAX_REDIRECTS:?Set MAX_REDIRECTS in .env}
+      MAX_DOWNLOAD_BYTES: ${MAX_DOWNLOAD_BYTES:?Set MAX_DOWNLOAD_BYTES in .env}
+      MAX_EXTRACTED_CHARS: ${MAX_EXTRACTED_CHARS:?Set MAX_EXTRACTED_CHARS in .env}
+    depends_on:
+      browserless:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      start_period: 5s
+      retries: 12
+    networks:
+      - workflow-a-internal
+
+volumes:
+  n8n_data:
+
+networks:
+  workflow-a-internal:
+    driver: bridge

@@ -1,0 +1,45 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+credentials/
+secrets/
+*.key
+*.pem
+service-account*.json
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# JavaScript and local service state
+node_modules/
+coverage/
+.cache/
+.n8n/
+n8n_data/
+n8n/workflow-a.json
+n8n/workflow-a-intake-trigger.json
+n8n/.workflow-a-verify-*.json
+# Builder-generated local Workflow B artifact; never hand-edit or commit.
+n8n/workflow-b.json
+
+# Logs, editor, and OS files
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Local data exports (may contain personal contact data)
+exports/

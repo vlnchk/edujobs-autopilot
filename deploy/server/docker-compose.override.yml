@@ -1,0 +1,51 @@
+# EduJobs vers_2 on the existing server n8n (Workflow A spec Section 22.1).
+# Installed as /opt/n8n-project/docker-compose.override.yml; Docker Compose merges
+# it into the existing docker-compose.yml there. Values come from the server .env
+# (see server.env.example). n8n does not depend on the worker, so production n8n
+# starts even when the worker is unhealthy.
+services:
+  content-worker:
+    build:
+      context: ./vers2/worker
+    image: edujobs-v2-content-worker
+    restart: always
+    mem_limit: 200m
+    environment:
+      BROWSERLESS_URL: http://browserless:3000/content
+      FETCH_TIMEOUT_SECONDS: ${FETCH_TIMEOUT_SECONDS:?Set FETCH_TIMEOUT_SECONDS in .env}
+      MAX_REDIRECTS: ${MAX_REDIRECTS:?Set MAX_REDIRECTS in .env}
+      MAX_DOWNLOAD_BYTES: ${MAX_DOWNLOAD_BYTES:?Set MAX_DOWNLOAD_BYTES in .env}
+      MAX_EXTRACTED_CHARS: ${MAX_EXTRACTED_CHARS:?Set MAX_EXTRACTED_CHARS in .env}
+    read_only: true
+    tmpfs:
+      - /tmp
+    depends_on:
+      browserless:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+
+  n8n:
+    environment:
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - CONTENT_WORKER_URL=http://content-worker:8000
+      - GOOGLE_SHEETS_DOCUMENT_ID=${GOOGLE_SHEETS_DOCUMENT_ID:-}
+      - GOOGLE_SHEETS_SHEET_NAME=${GOOGLE_SHEETS_SHEET_NAME:-}
+      - ELIGIBILITY_MODEL=${ELIGIBILITY_MODEL:?Set ELIGIBILITY_MODEL in .env}
+      - EDITOR_MODEL=${EDITOR_MODEL:?Set EDITOR_MODEL in .env}
+      - VALIDATOR_MODEL=${VALIDATOR_MODEL:?Set VALIDATOR_MODEL in .env}
+      - VALIDATOR_REASONING_EFFORT=${VALIDATOR_REASONING_EFFORT:-}
+      - MAX_LLM_SOURCE_CHARS=${MAX_LLM_SOURCE_CHARS:?Set MAX_LLM_SOURCE_CHARS in .env}
+      - MAX_EXTRACTED_CHARS=${MAX_EXTRACTED_CHARS:?Set MAX_EXTRACTED_CHARS in .env}
+      - MAX_PUBLICATION_DESCRIPTION_CHARS=${MAX_PUBLICATION_DESCRIPTION_CHARS:?Set MAX_PUBLICATION_DESCRIPTION_CHARS in .env}
+      - WORKFLOW_VERSION=${WORKFLOW_VERSION:?Set WORKFLOW_VERSION in .env}
+      - CONFIG_VERSION=${CONFIG_VERSION:?Set CONFIG_VERSION in .env}
+      - WORKFLOW_B_MODE=${WORKFLOW_B_MODE:-run}
+      - WORKFLOW_B_VERSION=${WORKFLOW_B_VERSION:?Set WORKFLOW_B_VERSION in .env}
+      - WORKFLOW_B_CONFIG_VERSION=${WORKFLOW_B_CONFIG_VERSION:?Set WORKFLOW_B_CONFIG_VERSION in .env}
+      - WORKFLOW_B_TELEGRAM_CHAT_ID=${WORKFLOW_B_TELEGRAM_CHAT_ID:?Set WORKFLOW_B_TELEGRAM_CHAT_ID in .env}
+      - WORKFLOW_B_TELEGRAM_EXPECTED_BOT_ID=${WORKFLOW_B_TELEGRAM_EXPECTED_BOT_ID:?Set WORKFLOW_B_TELEGRAM_EXPECTED_BOT_ID in .env}
