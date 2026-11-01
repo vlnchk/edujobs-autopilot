@@ -1,5 +1,10 @@
 # EduJobs Autopilot
 
+[![CI](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml)
+![Node.js 24](https://img.shields.io/badge/node.js-24-5FA04E?logo=nodedotjs&logoColor=white)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
+![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)
+
 **English** | [Русский](README.ru.md)
 
 An automation pipeline for [EduJobs](https://t.me/edujobs), a Telegram channel with vacancies in education and EdTech. Employers submit a vacancy through a Google Form. The system checks every application, rewrites it into a channel post, and hands it to a human editor. The editor approves or rejects it in Google Sheets, and the approved batch is published to Telegram.
@@ -61,11 +66,13 @@ All tests run offline, with no network access, credentials or production data:
 node --test
 ```
 
+Two of them import the generated workflows into a real n8n, so they need n8n 2.37.10 installed globally: `npm install --global n8n@2.37.10`.
+
 ```sh
 cd worker && python -m pytest
 ```
 
-At the time of publication: **797 Node.js tests** cover the workflow builders, deterministic logic, Google Sheets and Telegram integration with fixtures, and the batch runner. **81 Python tests** cover the content worker: fetching, extraction, the browser fallback and security checks. An offline evaluation harness (`n8n/eval-cases.mjs`, `n8n/eval-replay.mjs`) replays recorded cases to compare prompt and model configurations.
+At the time of publication: **797 Node.js tests** cover the workflow builders, deterministic logic, Google Sheets and Telegram integration with fixtures, and the batch runner. **81 Python tests** cover the content worker: fetching, extraction, the browser fallback and security checks. An offline evaluation harness (`n8n/eval-cases.mjs`, `n8n/eval-replay.mjs`) replays recorded cases to compare prompt and model configurations. Both suites run on every push and pull request in [GitHub Actions](.github/workflows/ci.yml).
 
 ## Repository structure
 
@@ -93,4 +100,4 @@ I designed the product, wrote the specifications, made every business and accept
 
 ## License
 
-© 2026 Stepan Vilenchik. All rights reserved. The source code is published for review only. It may not be copied, modified or used without written permission.
+© 2026 Stepan Vilenchik. All rights reserved. The source code is published for review only. It may not be copied, modified or used without written permission. See [LICENSE](LICENSE).
