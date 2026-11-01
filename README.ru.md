@@ -1,5 +1,10 @@
 # EduJobs Autopilot
 
+[![CI](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml)
+![Node.js 24](https://img.shields.io/badge/node.js-24-5FA04E?logo=nodedotjs&logoColor=white)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
+![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)
+
 [English](README.md) | **Русский**
 
 Система автоматизации для [EduJobs](https://t.me/edujobs) — Telegram-канала с вакансиями в образовании и EdTech. Работодатели присылают вакансию через Google Form. Система проверяет каждую заявку, переписывает её в пост для канала и передаёт редактору. Редактор одобряет или отклоняет заявку в Google Sheets, и одобренная подборка публикуется в Telegram.
@@ -61,11 +66,13 @@ flowchart LR
 node --test
 ```
 
+Два из них импортируют сгенерированные workflow в настоящий n8n, поэтому нужен глобально установленный n8n 2.37.10: `npm install --global n8n@2.37.10`.
+
 ```sh
 cd worker && python -m pytest
 ```
 
-На момент публикации: **797 тестов на Node.js** покрывают сборщики workflow, детерминированную логику, работу с Google Sheets и Telegram на фикстурах и пакетный запуск. **81 тест на Python** покрывает content-worker: загрузку, извлечение текста, браузерный fallback и проверки безопасности. Офлайн-стенд оценки (`n8n/eval-cases.mjs`, `n8n/eval-replay.mjs`) прогоняет записанные случаи, чтобы сравнивать конфигурации промптов и моделей.
+На момент публикации: **797 тестов на Node.js** покрывают сборщики workflow, детерминированную логику, работу с Google Sheets и Telegram на фикстурах и пакетный запуск. **81 тест на Python** покрывает content-worker: загрузку, извлечение текста, браузерный fallback и проверки безопасности. Офлайн-стенд оценки (`n8n/eval-cases.mjs`, `n8n/eval-replay.mjs`) прогоняет записанные случаи, чтобы сравнивать конфигурации промптов и моделей. Оба набора тестов запускаются на каждый push и pull request в [GitHub Actions](.github/workflows/ci.yml).
 
 ## Структура репозитория
 
@@ -93,4 +100,4 @@ cd worker && python -m pytest
 
 ## Лицензия
 
-© 2026 Степан Виленчик. Все права защищены. Исходный код опубликован только для ознакомления. Копирование, изменение и использование без письменного разрешения запрещены.
+© 2026 Степан Виленчик. Все права защищены. Исходный код опубликован только для ознакомления. Копирование, изменение и использование без письменного разрешения запрещены. См. [LICENSE](LICENSE).
