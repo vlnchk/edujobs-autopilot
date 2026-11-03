@@ -3,7 +3,7 @@
 [![CI](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml)
 ![Node.js 24](https://img.shields.io/badge/node.js-24-5FA04E?logo=nodedotjs&logoColor=white)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
-![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 **English** | [Русский](README.ru.md)
 
@@ -100,4 +100,4 @@ I designed the product, wrote the specifications, made every business and accept
 
 ## License
 
-© 2026 Stepan Vilenchik. All rights reserved. The source code is published for review only. It may not be copied, modified or used without written permission. See [LICENSE](LICENSE).
+© 2026 Stepan Vilenchik. Released under the [MIT License](LICENSE). The license covers the code and documentation; it grants no rights to the EduJobs name or the channel's brand.

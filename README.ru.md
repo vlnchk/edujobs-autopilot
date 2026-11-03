@@ -3,7 +3,7 @@
 [![CI](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/vlnchk/edujobs-autopilot/actions/workflows/ci.yml)
 ![Node.js 24](https://img.shields.io/badge/node.js-24-5FA04E?logo=nodedotjs&logoColor=white)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
-![License: proprietary](https://img.shields.io/badge/license-proprietary-lightgrey)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 [English](README.md) | **Русский**
 
@@ -100,4 +100,4 @@ cd worker && python -m pytest
 
 ## Лицензия
 
-© 2026 Степан Виленчик. Все права защищены. Исходный код опубликован только для ознакомления. Копирование, изменение и использование без письменного разрешения запрещены. См. [LICENSE](LICENSE).
+© 2026 Степан Виленчик. Проект распространяется по [лицензии MIT](LICENSE). Лицензия охватывает код и документацию, но не даёт прав на название EduJobs и бренд канала.
